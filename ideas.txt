@@ -1,0 +1,11 @@
+So, I want to make a yahtzee, deckbuilding rpg.
+
+you roll six dice (or 7 depending on your starting class)
+you get 2 rerolls (or more depending on subclass, items, etc.)
+you choose which die or dice to reroll
+and those dice are added up along with your combos (which are weighted) to
+give you energy in an energy pool (maybe make it different for each class idk)
+for which you can play cards!
+cards will be like classic deckbuilder things
+attacks, spells, buffs, heals, traps, maybe summons later or for different subclasses
+you fight against monsters and bosses and other characters like this.
