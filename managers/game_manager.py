@@ -9,7 +9,7 @@ from managers.overworld_manager import OverworldManager
 class GameManager:
 
     def __init__(self, window):
-        self.sm = SceneManager()
+
 
         #### timers ####
         self.win_timer = 0
@@ -30,7 +30,7 @@ class GameManager:
 
         #sprites and drawing#
         self.player = Character("Player", "warrior", 100, 100,0, ProtoDeck)
-        self.enemy = Character("lesser punkin", "trickster", 5, 50,0, EnemyDeck)
+        self.enemy = Character("lesser punkin", "trickster", 50, 50,0, EnemyDeck)
         self.enemy.sprite_path = "img/characters/punkin 1.png"
         self.player.sprite_path = "img/character png.png"
         self.background_sprite = pygame.image.load("img/maps/shifty town 1.png").convert()
@@ -49,6 +49,7 @@ class GameManager:
         ## managers ##
         self.ui = UIManager(window)
         self.overworld = OverworldManager(self.window, self.player, self.background_sprite)
+        self.sm = SceneManager(self.window)
 
         self.player_current_health = self.player.health
 
@@ -333,8 +334,18 @@ class GameManager:
 
  #################### OVERWORLD DIALOGUE and other stuff ######################
         if self.state == "overworld":
+
             self.music()
             self.keys = pygame.key.get_pressed()
+
+            if self.overworld.check_collide_obj() and self.keys[pygame.K_SPACE]:
+                self.overworld.msg_timer = 60  # show for 60 frames
+
+            if self.overworld.msg_timer > 0:
+                self.overworld.draw_info("you can't open that.... yet")
+                pygame.display.update()
+                self.overworld.msg_timer -= 1
+                return
 
             ### statue info ##
             if self.overworld.sign_timer > 0:

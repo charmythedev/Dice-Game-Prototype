@@ -1,7 +1,14 @@
 import re
+import random
 
 todos = [
-    "### todo update hitboxes and collision in overworld !!!(HIGH PRIORITY)!!!",
+    "### todo managers severely bloated need to update, all managers bloated, mostly overworld, ui and game manager (HIGH Priority)"
+    "## todo fix bugginess in check collision (High Priority)",
+    '### todo fix house tops rendering incorrectly in map( High Priority)(in fact refactor how maps work'
+    '# todo fix lucky rabbit\'s foot (it gives reroll for rest of combat) '
+    "# todo fix flaky combat flickery system, stop from rerolling if end turn or attack phase"
+    '#todo make more maps and add x, y detection to switch between maps (dict?)'
+    "### todo update hitboxes and collision in overworld (including using y positions for draw order) !!!(HIGH PRIORITY)!!!",
     "## todo make E (done-ish) and W walk animations + NW, NE, SW, SE",
     "## todo card animations and fixing combat window",
     "## todo fix resize function (maybe resize maps and window in general) !!!(High Priority)!!!",
@@ -43,4 +50,13 @@ for category in ["High Priority", "Highish Priority", "Medium Priority", "Low Pr
     print(f"\n=== {category} ===")
     for item in sorted_todos.get(category, []):
         print("-", item)
+
+def random_picker():
+    return random.choice(sorted_todos.get(category, []))
+
+print(f""" 
+RANDOM TASK OF THE DAY:
+{random_picker()}""")
+
+
 

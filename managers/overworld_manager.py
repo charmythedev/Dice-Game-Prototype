@@ -20,7 +20,7 @@ class OverworldManager:
         self.player_y = int(self.player_pos[1] * self.win_h)
             ####### todo fix player position x so that the footbox aligns with other hitboxes
         self.player_hitbox = pygame.Rect(self.player_x, self.player_y, self.player_w, self.player_h)
-        self.player_footbox = pygame.Rect(self.player_x, self.player_y, self.player_w, self.player_h)
+        self.player_footbox = pygame.Rect(self.player_x, self.player_y, self.player_w, self.player_h * .2)
 
         # dialogue timer and response
 
@@ -28,8 +28,10 @@ class OverworldManager:
         self.dialogue_timer = 0
         self.sign_timer = 0
         self.yes_response = 0
+        self.msg_timer = 0
 
         ###### MOVEMENT #####
+
         self.player_direction = "S"  # default facing south
         self.animations = {}
         for direction in ["N", "S", "E", "W"]:
@@ -61,12 +63,13 @@ class OverworldManager:
             "house_dl": (0.0805, 0.652, 0.0985, 0.15),
             "house_ur": (0.825, 0.16, 0.0985, 0.14),
             "house_br": (0.8225, 0.66, 0.0985, 0.14),
-            "statue": (0.41375, 0.45, 0.15, 0.069),
+            "statue": (0.41375, 0.44, 0.15, 0.069),
             "mail_1": (0.20125, 0.3383, 0.02, 0.05),
             "mail_2": (0.76625, 0.335, 0.02, 0.05),
             "mail_3": (0.64, 0.845, 0.02, 0.05),
             "mail_4": (0.3286, 0.835, 0.02, 0.05),
         }
+        # (x_ratio, y_ratio, w_ratio, h_ratio) to window size respectively
 
         #todo make this more modular for other maps
         #todo add interactions
@@ -74,6 +77,17 @@ class OverworldManager:
 
 
         self.rebuild_immovable_objects()
+
+    def draw_info(self, message):
+        font = pygame.font.SysFont(None, 24)
+        info = pygame.Rect(30, 450, 700, 150)
+        pygame.draw.rect(self.window, (255, 255, 255), info, 4)
+        pygame.draw.rect(self.window, (0, 0, 0), info.inflate(-8, -8))
+
+        text_surface = font.render(message, True, (255, 255, 255))
+        self.window.blit(text_surface, (info.x + 30, info.y + 30))
+
+        print(f"drew info with msg: {message}")
 
 
 
@@ -127,7 +141,7 @@ class OverworldManager:
                     return True
 
     def signs(self):
-        statue_info = ['"Jack: Hero of The Patch"']
+        statue_info = ['"Jack: Hero of Patch"']
 
         font = pygame.font.SysFont(None, 24)
 
@@ -158,11 +172,11 @@ class OverworldManager:
         self.player_hitbox.update(self.player_x, self.player_y, self.player_w* 1.5, self.player_h * 1.5)
 
         # Footbox (bottom 20% of sprite)
-        foot_h = int(self.player_h * 1.5 * 0.2)
-        foot_y = self.player_y + self.player_h - foot_h
-        foot_x = self.player_x + int(self.player_w * 0.1)  # optional horizontal padding
-        foot_w = int(self.player_w * 0.8)
-        self.player_footbox.update(foot_x, foot_y, foot_w, foot_h)
+        foot_h = int(self.player_h * .2)
+        self.foot_y = (self.player_y + self.player_h + foot_h+5)
+        foot_x = self.player_x + int(self.player_w * .1 + 3)  # optional horizontal padding
+        foot_w = int(self.player_w +4)
+        self.player_footbox.update(foot_x, self.foot_y, foot_w, foot_h)
 #### todo fix hitboxes wowza theyre messed up
     def make_scaled_rect(self,x_r, y_r, w_r, h_r):
         x = int(x_r * self.win_w)
@@ -215,44 +229,64 @@ class OverworldManager:
             self.walking_frames.append(frame)
         self.walking_frame_index = 0
         self.walking_timer = 0
+
     def draw(self):
         win_w, win_h = self.window.get_size()
         self.rebuild_immovable_objects()
 
-        # Scale and draw background
+        # Scale background once
         bg_scaled = pygame.transform.scale(self.background, (win_w, win_h))
         self.window.blit(bg_scaled, (0, 0))
 
-        # Scale and draw punkin
+        # Collect all drawables into a list
+        drawables = []
+
+        # Punkin
         punkin_w, punkin_h = int(win_w * 0.08), int(win_h * 0.14)
         punkin_x = int(self.punkin_pos[0] * win_w)
         punkin_y = int(self.punkin_pos[1] * win_h)
         punkin_scaled = pygame.transform.scale(self.punkin_sprite, (punkin_w, punkin_h))
-        self.punkin_hitbox = pygame.Rect(self.punkin_pos[0], self.punkin_pos[1], 64, 82)
-        self.window.blit(punkin_scaled, (punkin_x, punkin_y))
-
-        # Scale and draw player
-
+        punkin_feet_y = punkin_y + punkin_h
+        drawables.append((punkin_feet_y, punkin_scaled, punkin_x, punkin_y))
+        # Player
         player_w, player_h = (self.player_w * 1.5), (self.player_h * 1.5)
         player_x = int(self.player_pos[0] * win_w)
         player_y = int(self.player_pos[1] * win_h)
 
-        # Use animated frame if moving, else fallback to idle sprite
         if self.is_moving and hasattr(self, "walking_frames"):
             frame = self.walking_frames[self.walking_frame_index]
         else:
-            frame = self.player_sprite  # fallback idle sprite
+            frame = self.player_sprite
 
         player_scaled = pygame.transform.scale(frame, (player_w, player_h))
-        self.window.blit(player_scaled, (player_x, player_y))
-        self.update_player_hitbox()
-        self.update_walk_animation()
+        drawables.append((self.foot_y, player_scaled, player_x, player_y))
 
-
-        #### draw statue on top #########
+        # Statue top
         statue_top = pygame.image.load("img/maps/statue_top.png").convert_alpha()
         stat_scaled = pygame.transform.scale(statue_top, (win_w, win_h))
-        self.window.blit(stat_scaled, (0, 0))
+
+        # Pick a reference Y for the statue (e.g. its base or midline)
+        statue_y = int(0.45 * win_h)  # adjust to match your statue position
+
+        # Conditional layering: if player is above statue, statue draws in front
+        if self.foot_y < statue_y:
+            sort_y = self.foot_y + 1
+            print("drawing statue behind")# ensure statue sorts after player
+        else:
+            print("drawing statue in front")
+            sort_y = self.foot_y - 1  # ensure statue sorts before player
+        self.update_player_hitbox()
+        self.update_walk_animation()
+        drawables.append((sort_y, stat_scaled, 0, 0))
+
+        # Sort by Y coordinate
+        drawables.sort(key=lambda obj: obj[0])
+
+        # Draw in sorted order
+        for _, surface, x, y in drawables:
+            self.window.blit(surface, (x, y))
+
+        # Update hitboxes and animation
 
         ######### Test Walls ########
         if self.debug_mode:
@@ -276,7 +310,7 @@ class OverworldManager:
                 self.walking_timer = 0
 
     def move_player(self, direction):
-        print("moving")
+
         move_speed = 0.005
         next_pos = self.player_pos.copy()
 
@@ -302,7 +336,7 @@ class OverworldManager:
         next_x = int(next_pos[0] * self.win_w)
         next_y = int(next_pos[1] * self.win_h)
         foot_h = int(self.player_h * 0.2)
-        foot_y = next_y + self.player_h - foot_h
+        foot_y = next_y + self.player_h + foot_h
         next_footbox = pygame.Rect(next_x, foot_y, self.player_w, foot_h)
 
         for rect in self.immovable_objects.values():
