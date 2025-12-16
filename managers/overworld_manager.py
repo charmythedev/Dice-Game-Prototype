@@ -1,4 +1,6 @@
 import pygame
+
+
 class OverworldManager:
     def __init__(self, window, player_sprite, background_sprite):
         self.window = window
@@ -18,7 +20,7 @@ class OverworldManager:
         self.player_w, self.player_h = int(self.win_w * 0.036), int(self.win_h * 0.1)
         self.player_x = int(self.player_pos[0] * self.win_w) + 5
         self.player_y = int(self.player_pos[1] * self.win_h)
-            ####### todo fix player position x so that the footbox aligns with other hitboxes
+        ####### todo fix player position x so that the footbox aligns with other hitboxes
         self.player_hitbox = pygame.Rect(self.player_x, self.player_y, self.player_w, self.player_h)
         self.player_footbox = pygame.Rect(self.player_x, self.player_y, self.player_w, self.player_h * .2)
         self.foot_y = None
@@ -43,14 +45,8 @@ class OverworldManager:
                 frames.append(frame)
             self.animations[direction] = frames
 
-
-
-########### DEBUG MODE ################
+        ########### DEBUG MODE ################
         self.debug_mode = False
-
-
-
-
 
         ########## house positions #######
 
@@ -76,7 +72,6 @@ class OverworldManager:
         #todo add interactions
         #todo add text box and portraits
 
-
         self.rebuild_immovable_objects()
 
     def draw_info(self, message):
@@ -90,9 +85,7 @@ class OverworldManager:
 
         print(f"drew info with msg: {message}")
 
-
-
-#### todo refactor display info, make info_box a method that takes text as argument, ** kwargs for enemies, portraits, none for signs
+    #### todo refactor display info, make info_box a method that takes text as argument, ** kwargs for enemies, portraits, none for signs
     def display_info(self, punkin_defeated=False):
         info_box = pygame.Rect(30, 450, 700, 150)
         pygame.draw.rect(self.window, (255, 255, 255), info_box, 4)
@@ -133,6 +126,7 @@ class OverworldManager:
             self.window.blit(no_text, (self.no_button.x + 30, self.no_button.y + 8))
 
         return True
+
     def check_statue_collision(self):
         for name, rect in self.immovable_objects.items():
             if name == "statue":
@@ -170,16 +164,17 @@ class OverworldManager:
         self.player_h_scale = self.player_h * 1.5
 
         # Full-body hitbox
-        self.player_hitbox.update(self.player_x, self.player_y, self.player_w* 1.5, self.player_h * 1.5)
+        self.player_hitbox.update(self.player_x, self.player_y, self.player_w * 1.5, self.player_h * 1.5)
 
         # Footbox (bottom 20% of sprite)
         foot_h = int(self.player_h * .2)
-        self.foot_y = (self.player_y + self.player_h + foot_h+5)
+        self.foot_y = (self.player_y + self.player_h + foot_h + 5)
         foot_x = self.player_x + int(self.player_w * .1 + 3)  # optional horizontal padding
-        foot_w = int(self.player_w +4)
+        foot_w = int(self.player_w + 4)
         self.player_footbox.update(foot_x, self.foot_y, foot_w, foot_h)
-#### todo fix hitboxes wowza theyre messed up
-    def make_scaled_rect(self,x_r, y_r, w_r, h_r):
+
+    #### todo fix hitboxes wowza theyre messed up
+    def make_scaled_rect(self, x_r, y_r, w_r, h_r):
         x = int(x_r * self.win_w)
         y = int(y_r * self.win_h)
         w = int(w_r * self.win_w)
@@ -188,8 +183,7 @@ class OverworldManager:
 
     def check_collision(self):
 
-
-### todo make this work for any enemy (actually update to reflect enemies that talk and those that dont)
+        ### todo make this work for any enemy (actually update to reflect enemies that talk and those that dont)
 
         punkin_w, punkin_h = int(self.win_w * 0.08), int(self.win_h * 0.14)
         punkin_x = int(self.punkin_pos[0] * self.win_w)
@@ -204,7 +198,8 @@ class OverworldManager:
                 print(f"Collided with {name}")
                 return True
         return False
-### todo make modular for any immovable
+
+    ### todo make modular for any immovable
     def rebuild_immovable_objects(self):
         self.immovable_objects = {}
         for name, (x_r, y_r, w_r, h_r) in self.immovable_defs.items():
@@ -220,11 +215,10 @@ class OverworldManager:
         else:
             print(f"Unknown direction: {direction}")
 
-
     def animate_player(self, direction):
         self.walking_frames = []
 
-        for i in range(1,5):
+        for i in range(1, 5):
             frame = pygame.image.load(
                 f"img/characters/walking/proto character {direction}{i}.png").convert_alpha()
             self.walking_frames.append(frame)
@@ -272,7 +266,7 @@ class OverworldManager:
         # Conditional layering: if player is above statue, statue draws in front
         if self.foot_y < statue_y:
             sort_y = self.foot_y + 1
-            print("drawing statue behind")# ensure statue sorts after player
+            print("drawing statue behind")  # ensure statue sorts after player
         else:
             print("drawing statue in front")
             sort_y = self.foot_y - 1  # ensure statue sorts before player
@@ -353,17 +347,13 @@ class OverworldManager:
         self.player_pos = next_pos
         self.update_player_hitbox()
 
-
-
     def process_input(self, keys):
 
         direction = self.get_direction(keys)
         self.is_moving = False
 
         if direction:
-
             self.move_player(direction)
-
 
         # Interaction logic
         if keys[pygame.K_SPACE] and self.player_hitbox.colliderect(self.punkin_hitbox):
