@@ -21,6 +21,7 @@ class OverworldManager:
             ####### todo fix player position x so that the footbox aligns with other hitboxes
         self.player_hitbox = pygame.Rect(self.player_x, self.player_y, self.player_w, self.player_h)
         self.player_footbox = pygame.Rect(self.player_x, self.player_y, self.player_w, self.player_h * .2)
+        self.foot_y = None
 
         # dialogue timer and response
 
