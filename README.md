@@ -61,5 +61,48 @@ This project prioritizes **learning velocity and experimentation** over complete
 
 ---
 
-## 🗂️ Project Structure
+## Project Structure
+Dice-Game-Prototype/
+├── managers/ # Game state, dice logic, cards, and flow control
+├── prototypetest.py # Prototype entry / testing script
+├── .gitignore
+└── README.md
+
+
+---
+
+## Tech Stack
+
+- **Language:** Python
+- **Paradigm:** Object-oriented design
+- **Focus:** Game systems, state management, rapid iteration
+
+---
+
+## ⚠️ Known Limitations
+
+- Minimal UI
+- No save system or progression
+- Limited content and balancing
+- Bugs and rough edges remain
+
+These are deliberate tradeoffs for a prototype built to **learn, test, and discard ideas quickly**.
+
+---
+
+## What This Project Demonstrates
+
+- Translating abstract mechanics into playable systems
+- Designing a coherent game loop from simple components
+- Managing randomness, synergy, and player choice
+- Comfort prototyping without over-polishing
+
+---
+
+## License / Usage
+
+**All Rights Reserved**
+
+This repository is shared for **evaluation and portfolio review only**.  
+Reuse, modification, or redistribution is not permitted.
 
