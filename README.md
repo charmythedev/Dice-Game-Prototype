@@ -62,12 +62,13 @@ This project prioritizes **learning velocity and experimentation** over complete
 ---
 
 ## Project Structure
+```
 Dice-Game-Prototype/
 ├── managers/ # Game state, dice logic, cards, and flow control
 ├── prototypetest.py # Prototype entry / testing script
 ├── .gitignore
 └── README.md
-
+```
 
 ---
 
